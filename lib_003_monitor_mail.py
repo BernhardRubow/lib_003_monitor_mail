@@ -12,27 +12,29 @@ from lib_004_config_reader import nvp_config_reader as config_reader
 #   'password': 'password for login'
 # }
 
-config = config_reader.read_config_file('config.json')
+def sent_monit_mail(text_template, state='HEALTHY', string_to_append='no custom message'):
+    config = config_reader.read_config_file('config.json')
 
-# Import the email modules we'll need
-from email.message import EmailMessage
+    # Import the email modules we'll need
+    from email.message import EmailMessage
 
-textfile = 'message_content.txt'
-# Open the plain text file whose name is in textfile for reading.
-with open(textfile) as fp:
-    # Create a text/plain message
-    msg = EmailMessage()
-    msg.set_content(fp.read())
+    # Open the plain text file whose name is in textfile for reading.
+    with open(text_template) as fp:
+        # Create a text/plain message
+        msg = EmailMessage()
+        content = fp.read()
+        content += string_to_append
+        msg.set_content(content)
 
-# me == the sender's email address
-# you == the recipient's email address
-msg['Subject'] = config["subject"]
-msg['From'] = config["from"]
-msg['To'] = config['to']
+    # me == the sender's email address
+    # you == the recipient's email address
+    msg['Subject'] = config["subject"] + state
+    msg['From'] = config["from"]
+    msg['To'] = config['to']
 
-server = smtplib.SMTP_SSL(config['smtpServer'], config['port'])
-server.login(config['userName'], config['password'])
-server.send_message(msg)
-server.quit()
+    server = smtplib.SMTP_SSL(config['smtpServer'], config['port'])
+    server.login(config['userName'], config['password'])
+    server.send_message(msg)
+    server.quit()
 
-print("eMail send")
+    print("eMail send")
