@@ -1,6 +1,7 @@
 import smtplib
 from lib_004_config_reader import nvp_config_reader as config_reader
 
+# sample config file
 # config = {
 #   'subject': "your subject",
 #   'from': 'sender email address',
